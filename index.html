@@ -1,0 +1,1824 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+  <meta charset="UTF-8">
+  <title>موقعي</title>
+
+  
+  <style>
+   /* إعدادات عامة متقدمة */
+body {
+    font-family: 'Cairo', sans-serif;
+    background: linear-gradient(135deg, #1f1f2e, #12121c);
+    color: #e0e0e0;
+    margin: 0;
+    padding: 20px;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    direction: rtl;
+    scroll-behavior: smooth;
+}
+.theme-toggle {
+  position: fixed;
+  top: 20px;
+  left: 20px;
+  z-index: 999;
+  background-color: #333;
+  color: white;
+  padding: 10px 15px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 18px;
+}
+/* تنسيق إدخال نسبة الخلط */
+.mix-ratio-container {
+    margin: 15px 0;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 12px;
+    padding: 15px;
+    text-align: center;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+}
+
+.mix-ratio-container label {
+    display: block;
+    font-weight: bold;
+    margin-bottom: 10px;
+    color: #00e6b8;
+    font-size: 16px;
+}
+
+.mix-inputs {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+}
+
+.mix-inputs input {
+    width: 70px;
+    padding: 8px;
+    text-align: center;
+    border: 1px solid #444;
+    border-radius: 8px;
+    background: #1d1f27;
+    color: #fff;
+    font-size: 15px;
+    transition: 0.3s;
+}
+
+.mix-inputs input:focus {
+    border-color: #00e6b8;
+    outline: none;
+}
+
+.mix-inputs span {
+    font-weight: bold;
+    font-size: 18px;
+    color: #6dd5ed;
+}
+
+body.light-mode {
+  background: #f0f0f0;
+  color: #000;
+}
+.toast {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  background-color: #28a745;
+  color: white;
+  padding: 15px 20px;
+  border-radius: 10px;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.4);
+  opacity: 0;
+  transition: opacity 0.4s ease;
+  z-index: 1000;
+}
+
+.toast.show {
+  opacity: 1;
+}
+@media (max-width: 768px) {
+  .container {
+    padding: 25px 20px;
+    border-radius: 12px;
+  }
+
+  h1 {
+    font-size: 26px;
+  }
+
+  .section-title {
+    font-size: 18px;
+    padding: 14px 20px;
+  }
+
+  .input-group input,
+  .input-group select {
+    font-size: 14px;
+  }
+
+  button {
+    font-size: 15px;
+    padding: 10px 20px;
+  }
+
+  .theme-toggle {
+    font-size: 14px;
+    padding: 8px 12px;
+  }
+}
+body.light-mode {
+  background: #f0f0f0;
+  color: #111;
+}
+
+body.light-mode .container {
+  background: #ffffff;
+  border: 1px solid #ccc;
+  color: #111;
+}
+
+body.light-mode h1 {
+  background: none;
+  color: #2193b0;
+  -webkit-text-fill-color: initial;
+}
+
+body.light-mode .section-title {
+  background: #007bff;
+  color: #fff;
+}
+
+body.light-mode .calculator-content {
+  background-color: #f9f9f9;
+  border: 1px solid #ccc;
+  color: #111;
+}
+
+body.light-mode .input-group label {
+  color: #222;
+}
+
+body.light-mode .input-group input,
+body.light-mode .input-group select {
+  background-color: #fff;
+  color: #000;
+  border-color: #bbb;
+}
+
+body.light-mode .result-area {
+  background-color: #e6f4ea;
+  border: 1px solid #28a745;
+  color: #155724;
+}
+
+body.light-mode .theme-toggle {
+  background-color: #ddd;
+  color: #111;
+}
+
+/* صندوق الكونتينر */
+.container {
+    background: rgba(40, 44, 52, 0.95);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    backdrop-filter: blur(6px);
+    padding: 40px 35px;
+    border-radius: 20px;
+    box-shadow: 0 12px 35px rgba(0, 0, 0, 0.4);
+    width: 100%;
+    max-width: 850px;
+    transition: transform 0.4s ease, box-shadow 0.4s ease;
+    animation: fadeInUp 0.6s ease-out;
+}
+
+.container:hover {
+    transform: scale(1.005);
+    box-shadow: 0 14px 40px rgba(0, 0, 0, 0.5);
+}
+
+/* العنوان الرئيسي */
+h1 {
+    color: #ffffff;
+    font-size: 36px;
+    margin-bottom: 25px;
+    background: linear-gradient(to right, #6dd5ed, #2193b0);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+/* عنوان القسم */
+.section-title {
+    background: linear-gradient(135deg, #6a11cb, #2575fc);
+    padding: 18px 25px;
+    margin: 25px 0 15px;
+    border-radius: 14px;
+    cursor: pointer;
+    color: #fff;
+    font-size: 20px;
+    font-weight: bold;
+    text-align: center;
+    box-shadow: 0 5px 18px rgba(80, 110, 255, 0.3);
+    transition: all 0.3s ease;
+    position: relative;
+}
+
+.section-title:hover {
+    background: linear-gradient(135deg, #4a00e0, #0072ff);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 22px rgba(0, 0, 0, 0.4);
+}
+
+/* محتوى الآلة */
+.calculator-content {
+    background-color: #282c34;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    padding: 25px;
+    border-radius: 14px;
+    text-align: right;
+    margin-top: 10px;
+    animation: slideIn 0.5s ease-out;
+}
+
+/* الإدخال */
+.input-group {
+    margin-bottom: 20px;
+  text-align: center 
+}
+
+.input-group label {
+    display: block;
+    color: #ccc;
+    font-size: 15px;
+    margin-bottom: 6px;
+    font-weight: 600;
+   text-align: center 
+}
+
+.input-group input[type="number"],
+.input-group select,
+.input-group input[type="text"] { /* تم إضافة type="text" هنا */
+    width: 80%;
+    padding: 12px 14px;
+    border-radius: 10px;
+    border: 1px solid #444;
+    background-color: #1d1f27;
+    color: #fff;
+    font-size: 15px;
+    transition: border 0.3s ease;
+    text-align: center 
+
+}
+
+
+.input-group input:focus,
+.input-group select:focus {
+    border-color: #6dd5ed;
+    outline: none;
+  text-align: center 
+
+}
+
+/* زر الحسبة */
+button {
+    background: linear-gradient(135deg, #00b09b, #96c93d);
+    color: #fff;
+    padding: 14px 28px;
+    border: none;
+    border-radius: 12px;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    margin-top: 20px;
+    box-shadow: 0 5px 16px rgba(0, 255, 180, 0.3);
+}
+
+button:hover {
+    background: linear-gradient(135deg, #00816a, #7db515);
+    box-shadow: 0 8px 22px rgba(0, 255, 180, 0.4);
+    transform: translateY(-1px);
+}
+
+/* النتائج */
+.result-area {
+    margin-top: 25px;
+    padding: 20px;
+    background: #1f3326;
+    border: 1px solid #2aff8a;
+    border-radius: 10px;
+    color: #b8ffcf;
+    font-weight: bold;
+    font-size: 17px;
+}
+
+/* إخفاء المحتوى */
+.hidden-content {
+    display: none;
+}
+
+/* أنيميشنات */
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: translateX(-40px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+  </style>
+</head>
+<body>
+
+  
+ <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap" rel="stylesheet">
+
+
+<html lang="ar" dir="rtl">
+<head>
+  <link href="https://fonts.googleapis.com/css2?family=Cairo&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<i class="fas fa-calculator"></i>
+<i class="fas fa-bricks"></i>
+<i class="fas fa-user"></i>
+<i class="fas fa-cog"></i>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>حساب الكميات والاسعار </title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div id="toast" class="toast">تم تنفيذ العملية بنجاح</div>
+
+    <header>
+        <h1>حساب الكميات و الاسعار</h1>
+    </header>
+
+    <main>
+        <section class="calculator-group">
+            <h2 class="section-title" data-target="daily-workers-section">عدد العمال اليومي</h2>
+            <div id="daily-workers-section" class="calculator-content hidden-content">
+                <div class="input-group">
+                    <label for="workType">اختر نوع البناء:</label>
+                    <select id="workType">
+                        <option value="بناء الهيكل">بناء الهيكل</option>
+                        <option value="ارضيات">ارضيات</option>
+                        <option value="سيراميك">سيراميك</option>
+                        <option value="جص وابياض">جص وابياض</option>
+                    </select>
+                </div>
+                <button onclick="calculateDailyWorkers()">احسب</button>
+          
+                <div class="result-area" id="dailyWorkersResult"></div>
+            </div>
+        </section>
+
+        <section class="calculator-group">
+            <h2 class="section-title" data-target="excavation-fill-section">الحفر والردم (السبيس)</h2>
+            <div id="excavation-fill-section" class="calculator-content hidden-content">
+                <div class="input-group radio-group">
+                    <label>اختر نوع الحساب:</label>
+                    <div>
+                        <input type="radio" id="calcTypeExcavation" name="calcType" value="excavation" onchange="toggleExcavationFillFields()">
+                        <label for="calcTypeExcavation">حساب الحفر فقط</label>
+                    </div>
+                    <div>
+                        <input type="radio" id="calcTypeFill" name="calcType" value="fill" onchange="toggleExcavationFillFields()">
+                        <label for="calcTypeFill">حساب الردم فقط</label>
+                    </div>
+                    <div>
+                        <input type="radio" id="calcTypeBoth" name="calcType" value="both" checked onchange="toggleExcavationFillFields()">
+                        <label for="calcTypeBoth">حساب الحفر والردم معاً</label>
+                    </div>
+                </div>
+
+                <div id="excavation-inputs" class="input-subsection">
+                    <h3>بيانات الحفر</h3>
+                    <div class="input-group">
+                        <label for="H1">منسوب الأرض المطلوبة (H1):</label>
+                        <input type="number" id="H1" step="any">
+                    </div>
+                    <div class="input-group">
+                        <label for="H2">معدل مناسيب الأرض الطبيعية (H2) > H1:</label>
+                        <input type="number" id="H2" step="any">
+                    </div>
+                    <div class="input-group">
+                        <label for="A1">مساحة البناية (A1):</label>
+                        <input type="number" id="A1" step="any">
+                    </div>
+                    <div class="input-group">
+                        <label for="V1">حجم السيارة (V1):</label>
+                        <input type="number" id="V1" step="any">
+                    </div>
+                    <div class="input-group">
+                        <label for="P">سعر السيارة الواحدة (P):</label>
+                        <input type="number" id="P" step="any">
+                    </div>
+                </div>
+
+
+<div id="fill-inputs" class="input-subsection">
+                    <h3>بيانات الردم (السبيس)</h3>
+                    <div class="input-group">
+                        <label for="A2">مساحة البناية + ممشى العمال (A2):</label>
+                        <input type="number" id="A2" step="any">
+                    </div>
+                    <div class="input-group">
+                        <label for="H3">ارتفاع الردم (سم) (H3):</label>
+                        <input type="number" id="H3" step="any">
+                    </div>
+                    <div class="input-group">
+                        <label for="V2">حجم السيارة (V2):</label>
+                        <input type="number" id="V2" step="any">
+                    </div>
+                    <div class="input-group">
+                        <label for="P1">سعر السيارة الواحدة (P1):</label>
+                        <input type="number" id="P1" step="any">
+                    </div>
+                </div>
+
+                <button onclick="calculateExcavationFill()">احسب</button>
+               <button onclick="clearExcavationFill()">مسح الحقول</button>
+
+                <div class="result-area" id="excavationFillResult"></div>
+            </div>
+        </section>
+
+        <section class="calculator-group">
+            <h2 class="section-title" data-target="concrete-c1-c4-section">خرسانة(السقف-الجسر-الاعمدة-الدرج)</h2>
+            <div id="concrete-c1-c4-section" class="calculator-content hidden-content">
+                <div class="mix-ratio-container">
+    <label for="cementRatio">نسبة الخلط (سمنت : رمل : حصى)</label>
+    <div class="mix-inputs">
+        <input type="number" id="cementRatio" placeholder="1" step="any">
+        <span>:</span>
+        <input type="number" id="sandRatio" placeholder="2" step="any">
+        <span>:</span>
+        <input type="number" id="gravelRatio" placeholder="4" step="any">
+    </div>
+</div>
+
+                <div class="input-group">
+                    <label for="concretePricePerM3">سعر المتر المكعب (د.ع):</label>
+                    <input type="number" id="concretePricePerM3" value="80000" step="any">
+                </div>
+                
+
+                <div class="component-selection">
+                    <h3>اختر العناصر للحساب:</h3>
+                    <div>
+                        <input type="checkbox" id="selectRoof" onchange="toggleConcreteFields()">
+                        <label for="selectRoof">سقف</label>
+                    </div>
+                    <div>
+                        <input type="checkbox" id="selectBeam" onchange="toggleConcreteFields()">
+                        <label for="selectBeam">جسر</label>
+                    </div>
+                    <div>
+                        <input type="checkbox" id="selectColumns" onchange="toggleConcreteFields()">
+                        <label for="selectColumns">أعمدة</label>
+                    </div>
+                    <div>
+                        <input type="checkbox" id="selectStairs" onchange="toggleConcreteFields()">
+                        <label for="selectStairs">درج</label>
+                    </div>
+                </div>
+
+                <div id="concrete-fields-container">
+                </div>
+
+                <button onclick="calculateConcreteC1C4()">احسب</button>
+              <button onclick="clearConcreteC1C4Inputs()">مسح الحقول</button>
+
+                <button onclick="downloadConcreteReport()" id="downloadConcreteReportBtn" class="download-button" style="display:none;">تنزيل التقرير</button>
+                <div class="result-area" id="concreteC1C4Result"></div>
+            </div>
+        </section>
+
+<section class="calculator-group">
+    <h2 class="section-title" data-target="foundation-c5-section">خرسانة الأساس وصبة النضافة</h2>
+    <div id="foundation-c5-section" class="calculator-content hidden-content">
+        <div class="mix-ratio-container">
+            <label>نسبة الخلط (أسمنت : رمل : حصى)</label>
+            <div class="mix-inputs">
+                <input type="number" id="foundationCementRatio" placeholder="1" step="any" value="1">
+                <span>:</span>
+                <input type="number" id="foundationSandRatio" placeholder="3" step="any" value="3">
+                <span>:</span>
+                <input type="number" id="foundationGravelRatio" placeholder="6" step="any" value="6">
+            </div>
+        </div>
+        <div class="input-group">
+            <label for="foundationY7">(الارتفاع):</label>
+            <input type="number" id="foundationY7" step="any">
+        </div>
+        <div class="input-group">
+            <label for="foundationX8"> (العرض):</label>
+            <input type="number" id="foundationX8" step="any">
+        </div>
+        <div class="input-group">
+            <label for="foundationL8"> (الطول):</label>
+            <input type="number" id="foundationL8" step="any">
+        </div>
+        <div class="input-group">
+            <label for="foundationPricePerM3">سعر المتر المكعب (د.ع):</label>
+            <input type="number" id="foundationPricePerM3" value="80000" step="any">
+        </div>
+        <button onclick="calculateFoundationC5()">احسب</button>
+        <button onclick="clearFoundationC5Inputs()">مسح الحقول</button>
+
+        <div class="result-area" id="foundationC5Result"></div>
+    </div>
+</section>
+        <section class="calculator-group">
+            <h2 class="section-title" data-target="tile-porcelain-section">حساب الكاشي أو البورسلين</h2>
+            <div id="tile-porcelain-section" class="calculator-content hidden-content">
+                <div class="input-group">
+                    <label for="totalAreaTile">المساحة الكلية (م²):</label>
+                    <input type="number" id="totalAreaTile" step="any">
+                </div>
+                <div class="input-group">
+                    <label for="tileLength">طول البلاطة (م):</label>
+                    <input type="number" id="tileLength" step="any">
+                </div>
+                <div class="input-group">
+                    <label for="tileWidth">عرض البلاطة (م):</label>
+                    <input type="number" id="tileWidth" step="any">
+                </div>
+                <div class="input-group">
+                    <label for="tileType">نوع البلاط:</label>
+                    <select id="tileType" onchange="updateTilePriceHint()">
+                        <option value="كاشي">كاشي</option>
+                        <option value="بورسلين">بورسلين</option>
+                    </select>
+                </div>
+                <div class="input-group">
+                    <label for="pricePerM2Tile">سعر المتر المربع (د.ع):</label>
+                    <input type="number" id="pricePerM2Tile" step="any">
+                    <span class="hint-text" id="tilePriceHint">السعر التقريبي: 8000 د.ع/م²</span>
+                </div>
+                <button onclick="calculateTilePorcelain()">احسب</button>
+              <button onclick="clearTilePorcelainInputs()">مسح الحقول</button>
+                <div class="result-area" id="tilePorcelainResult"></div>
+            </div>
+        </section>
+
+        <section class="calculator-group">
+            <h2 class="section-title" data-target="bricks-cement-section">حساب الطابوق والأسمنت</h2>
+            <div id="bricks-cement-section" class="calculator-content hidden-content">
+                <div class="input-group">
+                    <label for="wallLengthWith">طول الحائط مع بتلو وجسر (م):</label>
+                    <input type="number" id="wallLengthWith" step="any">
+                </div>
+                <div class="input-group">
+                    <label for="wallLengthWithout">طول الحائط بدون بتلو وجسر (م):</label>
+                    <input type="number" id="wallLengthWithout" step="any">
+                </div>
+                <div class="input-group">
+                    <label for="wallHeight">ارتفاع الحائط (م):</label>
+                    <input type="number" id="wallHeight" step="any">
+                </div>
+
+
+<div class="input-group dynamic-input-group">
+                    <label for="numWindows">عدد الشبابيك:</label>
+                    <input type="number" id="numWindows" value="0" min="0" oninput="updateWindowDoorFields('window')">
+                    <div id="windowFieldsContainer" class="dynamic-fields-container"></div>
+                </div>
+
+                <div class="input-group dynamic-input-group">
+                    <label for="numDoors">عدد الأبواب:</label>
+                    <input type="number" id="numDoors" value="0" min="0" oninput="updateWindowDoorFields('door')">
+                    <div id="doorFieldsContainer" class="dynamic-fields-container"></div>
+                </div>
+
+                <div class="input-group">
+                    <label for="betloThickness">سمك البتلو (م):</label>
+                    <input type="number" id="betloThickness" value="0" step="any">
+                </div>
+                <div class="input-group">
+                    <label for="beamThickness">سمك الجسر (م):</label>
+                    <input type="number" id="beamThickness" value="0" step="any">
+                </div>
+
+                <div class="input-group radio-group">
+                    <label>نوع الطابوق:</label>
+                    <div>
+                        <input type="radio" id="brickTypeNormal" name="brickType" value="عادي" checked onchange="updateBrickPrice()">
+                        <label for="brickTypeNormal">عادي</label>
+                    </div>
+                    <div>
+                        <input type="radio" id="brickTypeRed" name="brickType" value="أحمر" onchange="updateBrickPrice()">
+                        <label for="brickTypeRed">أحمر</label>
+                    </div>
+                </div>
+                <div class="input-group">
+                    <label for="bricksPrice4000">السعر لكل 4000 طابوقة (د.ع):</label>
+                    <input type="number" id="bricksPrice4000" step="any">
+                    <span class="hint-text">(السعر تقريبي)</span>
+                </div>
+
+                <button onclick="calculateBricksCement()">احسب</button>
+               <button onclick="clearBricksCementInputs()">مسح الحقول</button>
+
+                <div class="result-area" id="bricksCementResult"></div>
+            </div>
+        </section>
+
+        <section class="calculator-group">
+            <h2 class="section-title" data-target="plaster-white-section">حساب الجص / الأبيّض</h2>
+            <div id="plaster-white-section" class="calculator-content hidden-content">
+                <div class="input-group">
+                    <label for="roomLength">طول الغرفة (م):</label>
+                    <input type="number" id="roomLength" step="any">
+                </div>
+                <div class="input-group">
+                    <label for="roomWidth">عرض الغرفة (م):</label>
+                    <input type="number" id="roomWidth" step="any">
+                </div>
+                <div class="input-group">
+                    <label for="wallHeightPlaster">ارتفاع الجدران (م):</label>
+                    <input type="number" id="wallHeightPlaster" step="any">
+                </div>
+                <div class="input-group">
+                    <label for="ceilingLength">طول السقف (م):</label>
+                    <input type="number" id="ceilingLength" step="any">
+                </div>
+                <div class="input-group">
+                    <label for="ceilingWidth">عرض السقف (م):</label>
+                    <input type="number" id="ceilingWidth" step="any">
+                </div>
+
+                <div class="input-group dynamic-input-group">
+                    <label>الشبابيك:</label>
+                    <button type="button" onclick="addWindowEntryPlaster()" class="add-remove-btn">+</button>
+                    <div id="plasterWindowFields" class="dynamic-fields-container"></div>
+                </div>
+
+
+<div class="input-group dynamic-input-group">
+                    <label>الأبواب:</label>
+                    <button type="button" onclick="addDoorEntryPlaster()" class="add-remove-btn">+</button>
+                    <div id="plasterDoorFields" class="dynamic-fields-container"></div>
+                </div>
+
+                <div class="input-group radio-group">
+                    <label>اختر نوع المادة:</label>
+                    <div>
+                        <input type="radio" id="materialTypePlaster" name="materialType" value="plaster" checked onchange="togglePlasterWhiteThickness()">
+                        <label for="materialTypePlaster">الجص</label>
+                    </div>
+                    <div>
+                        <input type="radio" id="materialTypeWhite" name="materialType" value="white" onchange="togglePlasterWhiteThickness()">
+                        <label for="materialTypeWhite">الأبيّض</label>
+                    </div>
+                </div>
+
+                <div class="input-group" id="plasterThicknessGroup">
+                    <label for="plasterThickness">سماكة الجص (م):</label>
+                    <input type="number" id="plasterThickness" value="0.02" step="any">
+                </div>
+                <div class="input-group" id="whiteThicknessGroup" style="display:none;">
+                    <label for="whiteThickness">سماكة الأبيّض (م):</label>
+                    <input type="number" id="whiteThickness" value="0.01" step="any">
+                </div>
+
+                <div class="input-group">
+                    <label for="plasterBagPrice">سعر كيس الجص (د.ع):</label>
+                    <input type="number" id="plasterBagPrice" value="3500" step="any">
+                </div>
+                <div class="input-group">
+                    <label for="whiteBagPrice">سعر كيس الأبيّض (د.ع):</label>
+                    <input type="number" id="whiteBagPrice" value="5000" step="any">
+                </div>
+
+                <button onclick="calculatePlasterWhite()">احسب</button>
+              <button onclick="clearPlasterWhiteInputs()">مسح الحقول</button>
+
+                <div class="result-area" id="plasterWhiteResult"></div>
+            </div>
+        </section>
+    </main>
+
+    <script src="script.js"></script>
+  <script>
+document.querySelectorAll('.section-title').forEach(title => {
+    title.addEventListener('click', function () {
+        // إخفاء كل الأقسام
+        document.querySelectorAll('.calculator-content').forEach(section => {
+            section.classList.add('hidden-content');
+        });
+
+        // إظهار القسم المطلوب
+        const targetId = this.getAttribute('data-target');
+        document.getElementById(targetId).classList.remove('hidden-content');
+
+        // ✅ إعادة تعيين واجهة العمال عند الدخول
+        if (targetId === 'daily-workers-section') {
+            document.getElementById('workType').selectedIndex = 0; // يرجع الخيار الأول
+            document.getElementById('dailyWorkersResult').innerHTML = ''; // يمسح النتيجة
+        }
+    });
+});
+</script>
+<script>
+function clearExcavationFill() {
+    // تنظيف بيانات الحفر
+    document.getElementById('H1').value = '';
+    document.getElementById('H2').value = '';
+    document.getElementById('A1').value = '';
+    document.getElementById('V1').value = '';
+    document.getElementById('P').value = '';
+
+    // تنظيف بيانات الردم
+    document.getElementById('A2').value = '';
+    document.getElementById('H3').value = '';
+    document.getElementById('V2').value = '';
+    document.getElementById('P1').value = '';
+
+    // مسح نتائج الحساب
+    document.getElementById('excavationFillResult').innerText = '';
+}
+</script>
+
+<script>
+function clearConcreteC1C4Inputs() {
+
+    // تنظيف حاوية الحقول الديناميكية
+    document.getElementById('concrete-fields-container').innerHTML = '';
+
+    // مسح نتيجة الحساب
+    document.getElementById('concreteC1C4Result').innerText = '';
+
+    // إخفاء زر تنزيل التقرير
+    document.getElementById('downloadConcreteReportBtn').style.display = 'none';
+
+
+// إلغاء تحديد كل checkboxes
+    document.getElementById('selectRoof').checked = false;
+    document.getElementById('selectBeam').checked = false;
+    document.getElementById('selectColumns').checked = false;
+    document.getElementById('selectStairs').checked = false;
+    
+    // إعادة تعيين نسبة الخلط للقيمة الافتراضية
+    document.getElementById('mixRatio').value = '1:1.5:3';
+}
+</script>
+
+<script>
+function clearFoundationC5Inputs() {
+    document.getElementById('foundationY7').value = '';
+    document.getElementById('foundationX8').value = '';
+    document.getElementById('foundationL8').value = '';
+    document.getElementById('foundationC5Result').innerText = '';
+}
+</script>
+<script>
+function clearTilePorcelainInputs() {
+    document.getElementById('totalAreaTile').value = '';
+    document.getElementById('tileLength').value = '';
+    document.getElementById('tileWidth').value = '';
+    document.getElementById('tileType').value = 'كاشي';
+    document.getElementById('tilePorcelainResult').innerText = '';
+}
+</script>
+
+
+<script>
+function clearBricksCementInputs() {
+    document.getElementById('wallLengthWith').value = '';
+    document.getElementById('wallLengthWithout').value = '';
+    document.getElementById('wallHeight').value = '';
+    
+    document.getElementById('numWindows').value = 0;
+    document.getElementById('windowFieldsContainer').innerHTML = '';
+    
+    document.getElementById('numDoors').value = 0;
+    document.getElementById('doorFieldsContainer').innerHTML = '';
+    
+    document.getElementById('betloThickness').value = 0;
+    document.getElementById('beamThickness').value = 0;
+
+    // إعادة تعيين اختيار نوع الطابوق إلى "عادي"
+    document.getElementById('brickTypeNormal').checked = true;
+    document.getElementById('bricksCementResult').innerText = '';
+}
+</script>
+<script>
+function clearPlasterWhiteInputs() {
+    document.getElementById('roomLength').value = '';
+    document.getElementById('roomWidth').value = '';
+    document.getElementById('wallHeightPlaster').value = '';
+    document.getElementById('ceilingLength').value = '';
+    document.getElementById('ceilingWidth').value = '';
+
+    const windowsContainer = document.getElementById('plasterWindowFields');
+    windowsContainer.innerHTML = '';
+
+    const doorsContainer = document.getElementById('plasterDoorFields');
+    doorsContainer.innerHTML = '';
+
+    document.getElementById('materialTypePlaster').checked = true;
+    togglePlasterWhiteThickness();
+
+    document.getElementById('plasterWhiteResult').innerHTML = '';
+}
+
+// الدالة togglePlasterWhiteThickness لازم تكون موجودة في سكريبتك حتى تعمل بشكل صحيح
+</script>
+<script>
+  function toggleTheme() {
+    document.body.classList.toggle("light-mode");
+
+    if (document.body.classList.contains("light-mode")) {
+      document.body.style.background = "#f0f0f0";
+      document.body.style.color = "#000";
+    } else {
+      document.body.style.background = "linear-gradient(135deg, #1f1f2e, #12121c)";
+      document.body.style.color = "#e0e0e0";
+    }
+  }
+</script>
+<script>
+  function toggleTheme() {
+    document.body.classList.toggle("light-mode");
+  }
+</script>
+
+</body>
+  <div class="theme-toggle" onclick="toggleTheme()">
+  <i class="fas fa-adjust"></i> تغيير الوضع
+</div>
+
+</html>
+  <script>
+    function showToast() {
+  const toast = document.getElementById("toast");
+  toast.classList.add("show");
+  setTimeout(() => {
+    toast.classList.remove("show");
+  }, 3000);
+}
+
+// Global Constants (Prices)
+const PRICE_BRICKS_NORMAL_4000 = 650000;         // سعر 4000 طابوقة عادية
+const PRICE_RED_BRICKS_4000 = 1100000;    // سعر 4000 طابوقة حمراء
+const PRICE_CONCRETE_PER_M3 = 80000;      // سعر المتر المكعب للخرسانة
+const PRICE_CEMENT_BAG = 5000;             // سعر كيس الاسمنت
+const PRICE_PORCELAIN_PER_M2 = 9000;      // سعر البورسلين للمتر المربع
+const PRICE_TILE_PER_M2 = 8000;            // سعر الكاشي للمتر المربع تقريبا
+
+// Constants for Bricks Calculation
+const BRICK_HEIGHT = 0.08; // meters
+const BRICK_LENGTH = 0.24; // meters
+const CEMENT_PER_1000_BRICKS = 3.25; // أكياس الأسمنت لكل 1000 طابوقة
+const CEMENT_SPECIFIC_GRAVITY = 1440; // الوزن النوعي للأسمنت (كيلو غرام/م³)
+
+// Helper Functions
+function formatNumber(num) {
+    // Check if the number is an integer or has decimals that should be shown
+    if (Number.isInteger(num)) {
+        return num.toLocaleString('ar-IQ');
+    }
+    // For decimals, keep two decimal places and then format
+    return parseFloat(num.toFixed(2)).toLocaleString('ar-IQ');
+}
+
+function showAlert(message, type = 'info') {
+    // A simple alert for now. For a real app, consider a custom modal or message display.
+    if (type === 'error') {
+        alert("خطأ: " + message);
+    } else {
+        alert(message);
+    }
+}
+
+function getInputValue(id, isOptional = false, type = 'float') {
+    const element = document.getElementById(id);
+    if (!element) {
+        if (!isOptional) console.error(`Element with ID ${id} not found.`);
+        return undefined; // Or throw an error for non-optional missing elements
+    }
+    const value = element.value.trim();
+    if (value === '' && isOptional) {
+        return 0; // Return 0 for empty optional fields
+    }
+    if (value === '') {
+        throw new Error(`القيمة مطلوبة لحقل: ${element.previousElementSibling ? element.previousElementSibling.innerText : id}`);
+    }
+    let parsedValue;
+    if (type === 'float') {
+        parsedValue = parseFloat(value);
+    } else if (type === 'int') {
+        parsedValue = parseInt(value, 10);
+    } else if (type === 'text') {
+        return value;
+    }
+
+    if (isNaN(parsedValue) && type !== 'text') {
+        throw new Error(`الرجاء إدخال قيمة رقمية صحيحة لحقل: ${element.previousElementSibling ? element.previousElementSibling.innerText : id}`);
+    }
+    return parsedValue;
+}
+
+// =======================================================
+// 1. عدد العمال اليومي (Equivalent to open_tab7)
+// =======================================================
+function calculateDailyWorkers() {
+    const workTypeSelect = document.getElementById('workType');
+    const workType = workTypeSelect.value;
+    let resultLines = [];
+
+    switch (workType) {
+        case "بناء الهيكل":
+            resultLines.push("1 خلفة");
+            resultLines.push("1 مساعد");
+            resultLines.push("1 مٌناول الطابوق");
+            resultLines.push("2 عامل أيصال الخبط");
+            resultLines.push("1 خباط");
+            break;
+        case "ارضيات":
+            resultLines.push("1 خلفة");
+            resultLines.push("1 مساعد");
+            resultLines.push("2 خباط");
+            break;
+        case "سيراميك":
+            resultLines.push("1 خلفة");
+            resultLines.push("1 مساعد");
+            resultLines.push("1 خباط");
+            break;
+        case "جص وابياض":
+            resultLines.push("1 خلفة");
+            resultLines.push("1 مساعد");
+            break;
+        default:
+            resultLines.push("نوع البناء غير معروف");
+    }
+
+    document.getElementById('dailyWorkersResult').innerText = resultLines.join('\n');
+}
+
+// =======================================================
+// 2. الحفر والردم (السبيس) (Equivalent to open_tab6)
+// =======================================================
+function toggleExcavationFillFields() {
+    const calcTypeExcavation = document.getElementById('calcTypeExcavation').checked;
+    const calcTypeFill = document.getElementById('calcTypeFill').checked;
+    const calcTypeBoth = document.getElementById('calcTypeBoth').checked;
+
+    const excavationInputs = document.querySelectorAll('#excavation-inputs input');
+    const fillInputs = document.querySelectorAll('#fill-inputs input');
+
+    if (calcTypeExcavation) {
+        excavationInputs.forEach(input => input.disabled = false);
+        fillInputs.forEach(input => { input.value = ''; input.disabled = true; });
+    } else if (calcTypeFill) {
+        excavationInputs.forEach(input => { input.value = ''; input.disabled = true; });
+        fillInputs.forEach(input => input.disabled = false);
+    } else { // calcTypeBoth
+        excavationInputs.forEach(input => input.disabled = false);
+        fillInputs.forEach(input => input.disabled = false);
+    }
+}
+
+function calculateExcavationFill() {
+    const calcTypeExcavation = document.getElementById('calcTypeExcavation').checked;
+    const calcTypeFill = document.getElementById('calcTypeFill').checked;
+    const calcTypeBoth = document.getElementById('calcTypeBoth').checked;
+
+    let resultLines = [];
+    let hasError = false;
+
+    try {
+        // ----- Excavation Calculation -----
+        if (calcTypeExcavation || calcTypeBoth) {
+            const H1 = getInputValue('H1');
+            const H2 = getInputValue('H2');
+            const A1 = getInputValue('A1');
+            const V1 = getInputValue('V1');
+            const P = getInputValue('P');
+
+            if (H2 <= H1) {
+                throw new Error("معدل مناسيب الأرض الطبيعية (H2) يجب أن يكون أكبر من منسوب الأرض المطلوبة (H1).");
+            }
+            if (A1 <= 0 || V1 <= 0 || P <= 0) {
+                throw new Error("جميع قيم الحفر (المساحة، حجم السيارة، السعر) يجب أن تكون أكبر من صفر.");
+            }
+
+            const Y = H2 - H1;
+            const T = Y * A1 * 1.25; // 1.25 for expansion factor of excavated soil
+            const N = T / V1;
+            const totalPriceHfr = N * P;
+
+            resultLines.push("---- الحفر ----");
+            resultLines.push(`عمق الحفر: ${Y.toFixed(2)} م`);
+            resultLines.push(`كمية الحفر: ${T.toFixed(2)} م³`);
+            resultLines.push(`عدد السيارات المطلوبة: ${N.toFixed(2)}`);
+            resultLines.push(`السعر الكلي للحفر: ${formatNumber(totalPriceHfr)} د.ع`);
+        }
+
+        // ----- Fill Calculation -----
+        if (calcTypeFill || calcTypeBoth) {
+            if (resultLines.length > 0 && (calcTypeExcavation || calcTypeBoth)) resultLines.push('\n'); // Add newline if previous section exists
+
+            const A2 = getInputValue('A2');
+            const H3 = getInputValue('H3'); // in cm
+            const V2 = getInputValue('V2');
+            const P1 = getInputValue('P1');
+
+            if (A2 <= 0 || H3 <= 0 || V2 <= 0 || P1 <= 0) {
+                throw new Error("جميع قيم الردم (المساحة، الارتفاع، حجم السيارة، السعر) يجب أن تكون أكبر من صفر.");
+            }
+
+            const H3_m = H3 / 100; // Convert cm to meters
+
+            resultLines.push("---- الردم (السبيس) ----");
+            if (H3 <= 25) {
+                const T2 = A2 * (H3_m + 0.02); // 0.02 for compaction
+                const N1 = T2 / V2;
+                const priceRdm = N1 * P1;
+                resultLines.push(`كمية الردم: ${T2.toFixed(2)} م³`);
+                resultLines.push(`عدد السيارات: ${N1.toFixed(2)}`);
+                resultLines.push(`السعر الكلي للردم: ${formatNumber(priceRdm)} د.ع`);
+            } else {
+                // Two layers for compaction over 25cm
+                const H3_half = H3_m / 2;
+                const T2_layer = A2 * (H3_half + 0.02);
+                const N1_layer = T2_layer / V2;
+                const priceLayer = N1_layer * P1;
+                const totalRdm = T2_layer * 2;
+                const totalTrucks = N1_layer * 2;
+                const totalPrice = priceLayer * 2;
+
+                resultLines.push("ارتفاع الردم أكبر من 25 سم → طبقتين:");
+                resultLines.push(`كمية الردم للطبقة الواحدة: ${T2_layer.toFixed(2)} م³`);
+                resultLines.push(`عدد السيارات لكل طبقة: ${N1_layer.toFixed(2)}`);
+                resultLines.push(`السعر لكل طبقة: ${formatNumber(priceLayer)} د.ع`);
+                resultLines.push(`الكمية الإجمالية: ${totalRdm.toFixed(2)} م³`);
+                resultLines.push(`عدد السيارات الكلي: ${totalTrucks.toFixed(2)}`);
+                resultLines.push(`السعر الكلي للردم: ${formatNumber(totalPrice)} د.ع`);
+            }
+        }
+
+        if (resultLines.length === 0) {
+            document.getElementById('excavationFillResult').innerText = "لا توجد بيانات للحساب أو لم يتم اختيار نوع حساب.";
+        } else {
+            document.getElementById('excavationFillResult').innerText = resultLines.join('\n');
+        }
+    } catch (e) {
+        showAlert(e.message, "error");
+        document.getElementById('excavationFillResult').innerText = "حدث خطأ في الإدخال.";
+    }
+}
+
+// =======================================================
+// =======================================================
+// Concrete works C1 to C4 with material estimation
+// =======================================================
+
+const concreteComponentsData = {
+    "سقف": [
+        { id: "Y1", label: "Y1 (ارتفاع السقف)" },
+        { id: "L1", label: "L1 (طول السقف)" },
+        { id: "X1", label: "X1 (عرض السقف)" },
+        { id: "L2", label: "L2 (طول المنور)", optional: true },
+        { id: "X2", label: "X2 (عرض المنور)", optional: true },
+        { id: "LS", label: "LS (طول فتحة الدرج)", optional: true },
+        { id: "XS", label: "XS (عرض فتحة الدرج)", optional: true }
+    ],
+    "جسر": [
+        { id: "L3", label: "L3 (طول الجسر)" },
+        { id: "X3", label: "X3 (عرض الجسر)" },
+        { id: "Y3", label: "Y3 (ارتفاع الجسر)" }
+    ],
+    "أعمدة": [
+        { id: "L4", label: "L4 (طول العمود)" },
+        { id: "X4", label: "X4 (عرض العمود)" },
+        { id: "Y4", label: "Y4 (ارتفاع العمود)" },
+        { id: "n", label: "n (عدد الأعمدة)", type: "int" }
+    ],
+    "درج": [
+        { id: "Y5", label: "Y5 (ارتفاع الطابق مع السقف)" },
+        { id: "Y6", label: "Y6 (ارتفاع البايه)" },
+        { id: "L6", label: "L6 (طول البايه)" },
+        { id: "X6", label: "X6 (عرض البايه)" },
+        { id: "N_stairs", label: "N (عدد الاستراحات)", type: "int" },
+        { id: "L7", label: "L7 (طول الاستراحة)", optional: true },
+        { id: "X7", label: "X7 (عرض الاستراحة)", optional: true }
+    ]
+};
+
+const concreteFieldsContainer = document.getElementById('concrete-fields-container');
+let concreteReportText = ""; // لتخزين التقرير
+
+function toggleConcreteFields() {
+    concreteFieldsContainer.innerHTML = ''; // تنظيف الحقول السابقة
+
+    const selectedComponents = {
+        roof: document.getElementById('selectRoof').checked,
+        beam: document.getElementById('selectBeam').checked,
+        columns: document.getElementById('selectColumns').checked,
+        stairs: document.getElementById('selectStairs').checked
+    };
+
+    const createInputGroup = (id, labelText, type = 'number') => {
+        const div = document.createElement('div');
+        div.className = 'input-group concrete-input-field';
+
+        const label = document.createElement('label');
+        label.setAttribute('for', `concrete-${id}`);
+        label.innerText = labelText;
+        div.appendChild(label);
+
+        const input = document.createElement('input');
+        input.type = type;
+        input.id = `concrete-${id}`;
+        input.step = 'any';
+        div.appendChild(input);
+
+        div.appendChild(input);
+        return div;
+    };
+
+    if (selectedComponents.roof) {
+        const h3 = document.createElement('h3');
+        h3.innerText = "بيانات السقف:";
+        concreteFieldsContainer.appendChild(h3);
+        concreteComponentsData["سقف"].forEach(field => {
+            concreteFieldsContainer.appendChild(createInputGroup(field.id, field.label, field.type));
+        });
+    }
+
+    if (selectedComponents.beam) {
+        const h3 = document.createElement('h3');
+        h3.innerText = "بيانات الجسر:";
+        concreteFieldsContainer.appendChild(h3);
+        concreteComponentsData["جسر"].forEach(field => {
+            concreteFieldsContainer.appendChild(createInputGroup(field.id, field.label, field.type));
+        });
+    }
+
+    if (selectedComponents.columns) {
+        const h3 = document.createElement('h3');
+        h3.innerText = "بيانات الأعمدة:";
+        concreteFieldsContainer.appendChild(h3);
+        concreteComponentsData["أعمدة"].forEach(field => {
+            concreteFieldsContainer.appendChild(createInputGroup(field.id, field.label, field.type));
+        });
+    }
+
+    if (selectedComponents.stairs) {
+        const h3 = document.createElement('h3');
+        h3.innerText = "بيانات الدرج:";
+        concreteFieldsContainer.appendChild(h3);
+        concreteComponentsData["درج"].forEach(field => {
+            concreteFieldsContainer.appendChild(createInputGroup(field.id, field.label, field.type));
+        });
+    }
+}
+
+function getConcreteSpecificInput(id, isOptional = false, type = 'float') {
+    return getInputValue(`concrete-${id}`, isOptional, type);
+}
+
+function calculateConcreteC1C4() {
+    let totalVolume = 0;
+    let totalSteel = 0;
+    let resultLines = [];
+
+    const pricePerM3 = getInputValue('concretePricePerM3');
+    if (pricePerM3 <= 0) {
+        showAlert("الرجاء إدخال سعر المتر المكعب للخرسانة بشكل صحيح (يجب أن يكون أكبر من صفر).", "error");
+        document.getElementById('concreteC1C4Result').innerText = "";
+        document.getElementById('downloadConcreteReportBtn').style.display = 'none';
+        concreteReportText = "";
+        return;
+    }
+
+    try {
+        // ===== C1 ===== (Roof)
+        if (document.getElementById('selectRoof').checked) {
+            const Y1 = getConcreteSpecificInput("Y1");
+            const L1 = getConcreteSpecificInput("L1");
+            const X1 = getConcreteSpecificInput("X1");
+            const L2 = getConcreteSpecificInput("L2", true);
+            const X2 = getConcreteSpecificInput("X2", true);
+            const LS = getConcreteSpecificInput("LS", true);
+            const XS = getConcreteSpecificInput("XS", true);
+
+            if (Y1 <= 0 || L1 <= 0 || X1 <= 0) throw new Error("قيم السقف يجب أن تكون أكبر من صفر.");
+
+            const C1_volume = Y1 * L1 * X1;
+            const VM = (L2 && X2) ? L2 * X2 * Y1 : 0;
+            const VS = (LS && XS) ? LS * XS * Y1 : 0;
+            const VT = C1_volume - VM - VS;
+            const steel1 = parseFloat((VT * 0.1).toFixed(2));
+            totalVolume += VT;
+            totalSteel += steel1;
+            resultLines.push(`السقف:\n  الحجم: ${VT.toFixed(2)} م³\n  الحديد: ${steel1} طن`);
+        }
+
+        // ===== C2 ===== (Beam)
+        if (document.getElementById('selectBeam').checked) {
+            const L3 = getConcreteSpecificInput("L3");
+            const X3 = getConcreteSpecificInput("X3");
+            const Y3 = getConcreteSpecificInput("Y3");
+
+            if (L3 <= 0 || X3 <= 0 || Y3 <= 0) throw new Error("قيم الجسر يجب أن تكون أكبر من صفر.");
+
+            const C2 = L3 * X3 * Y3;
+            const steel2 = parseFloat((C2 * 0.12).toFixed(2));
+            totalVolume += C2;
+            totalSteel += steel2;
+            resultLines.push(`الجسر:\n  الحجم: ${C2.toFixed(2)} م³\n  الحديد: ${steel2} طن`);
+        }
+
+        // ===== C3 ===== (Columns)
+        if (document.getElementById('selectColumns').checked) {
+            const L4 = getConcreteSpecificInput("L4");
+            const X4 = getConcreteSpecificInput("X4");
+            const Y4 = getConcreteSpecificInput("Y4");
+            const n = getConcreteSpecificInput("n", false, 'int');
+
+            if (L4 <= 0 || X4 <= 0 || Y4 <= 0 || n <= 0) throw new Error("قيم الأعمدة يجب أن تكون أكبر من صفر.");
+
+            const C3 = L4 * X4 * Y4 * n;
+            const steel3 = parseFloat((C3 * 0.13).toFixed(2));
+            totalVolume += C3;
+            totalSteel += steel3;
+            resultLines.push(`الأعمدة:\n  الحجم: ${C3.toFixed(2)} م³\n  الحديد: ${steel3} طن`);
+        }
+
+        // ===== C4 ===== (Stairs)
+        if (document.getElementById('selectStairs').checked) {
+            const Y5 = getConcreteSpecificInput("Y5");
+            const Y6 = getConcreteSpecificInput("Y6");
+            const L6 = getConcreteSpecificInput("L6");
+            const X6 = getConcreteSpecificInput("X6");
+            const N_stairs = getConcreteSpecificInput("N_stairs", false, 'int');
+            const L7 = getConcreteSpecificInput("L7", true);
+            const X7 = getConcreteSpecificInput("X7", true);
+
+            if (Y5 <= 0 || Y6 <= 0 || L6 <= 0 || X6 <= 0) throw new Error("قيم الدرج غير صحيحة.");
+
+            const Z_total = Math.floor(Y5 / Y6);
+            const Y6_new = Y5 / Z_total;
+            const V1_steps = Y6_new * L6 * X6 * Z_total;
+            const V1_landings = (L7 && X7) ? L7 * X7 * Y6_new * N_stairs : 0;
+            const V1 = V1_steps + V1_landings;
+            const Z_actual_steps = Z_total - N_stairs;
+            const V2 = Y6_new * X6 * L6 * 0.5 * Z_actual_steps;
+            const C4 = V1 + V2;
+            const steel4 = parseFloat((C4 * 0.12).toFixed(2));
+            totalVolume += C4;
+            totalSteel += steel4;
+            resultLines.push(`الدرج:\n  الحجم: ${C4.toFixed(2)} م³\n  الحديد: ${steel4} طن`);
+        }
+
+        // ===== إجمالي الخرسانة =====
+        const costConcrete = totalVolume * pricePerM3;
+        resultLines.push(`\nالإجمالي:\n  الحجم: ${totalVolume.toFixed(2)} م³\n  الحديد: ${totalSteel.toFixed(2)} طن\n  السعر: ${formatNumber(costConcrete)} د.ع`);
+
+        // ===== حساب المواد بناءً على النسبة =====
+        const C = parseFloat(document.getElementById('cementRatio').value) || 1;
+        const S = parseFloat(document.getElementById('sandRatio').value) || 2;
+        const G = parseFloat(document.getElementById('gravelRatio').value) || 4;
+
+        const totalParts = C + S + G;
+        const cementVolume = (totalVolume * C * 0.67) / totalParts;
+        const cementWeight = cementVolume * 1440; // كغم
+        const cementBags = cementWeight / 50; // كيس 50 كغم
+        const sandVolume = (totalVolume * S * 0.67) / totalParts;
+        const gravelVolume = (totalVolume * G * 0.67) / totalParts;
+
+        resultLines.push(`\nتقدير المواد (نسبة ${C}:${S}:${G}):`);
+        resultLines.push(`  السمنت: ${cementBags.toFixed(1)} كيس (${cementWeight.toFixed(0)} كغم)`);
+        resultLines.push(`  الرمل: ${sandVolume.toFixed(2)} م³`);
+        resultLines.push(`  الحصى: ${gravelVolume.toFixed(2)} م³`);
+
+        concreteReportText = resultLines.join("\n\n");
+        document.getElementById('concreteC1C4Result').innerText = concreteReportText;
+        document.getElementById('downloadConcreteReportBtn').style.display = 'block';
+    } catch (e) {
+        showAlert(e.message, "error");
+        document.getElementById('concreteC1C4Result').innerText = "حدث خطأ في الإدخال.";
+        document.getElementById('downloadConcreteReportBtn').style.display = 'none';
+        concreteReportText = "";
+    }
+}
+
+function downloadConcreteReport() {
+    if (!concreteReportText) {
+        showAlert("الرجاء تنفيذ الحساب أولاً للحصول على تقرير للحفظ.", "info");
+        return;
+    }
+    const blob = new Blob([concreteReportText], { type: 'text/plain;charset=utf-8' });
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = 'تقرير_الخرسانة.txt';
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(a.href);
+}
+
+
+// =======================================================
+// // ... (الكود السابق)
+
+// =======================================================
+//// Constants (تأكد من وجود هذه الثوابت في ملفك)
+// const CEMENT_SPECIFIC_GRAVITY = 1440; // kg/m³
+// const PRICE_CEMENT_BAG = 5000;      // D.A
+
+// =======================================================
+// 4. C5 - الأساس (Equivalent to open_c5)
+// =======================================================
+function calculateFoundationC5() {
+    try {
+        const Y = getInputValue('foundationY7');
+        const X = getInputValue('foundationX8');
+        const L = getInputValue('foundationL8');
+        const pricePerM3 = getInputValue('foundationPricePerM3');
+        
+        // 1. Get and Validate Mix Ratio (تعديل القراءة)
+        const ratioC = getInputValue('foundationCementRatio'); // Cement Ratio
+        const ratioS = getInputValue('foundationSandRatio');   // Sand Ratio
+        const ratioG = getInputValue('foundationGravelRatio'); // Gravel Ratio
+
+        if (ratioC <= 0 || ratioS <= 0 || ratioG <= 0) {
+            throw new Error("نسبة الخلط غير صحيحة. الرجاء إدخال قيم رقمية موجبة لكل من الأسمنت والرمل والحصى.");
+        }
+        
+        if (Y <= 0 || X <= 0 || L <= 0 || pricePerM3 <= 0) {
+            throw new Error("تأكد من إدخال جميع القيم الهندسية والسعر بشكل صحيح ويجب أن تكون أكبر من صفر.");
+        }
+
+        const sumRatios = ratioC + ratioS + ratioG;
+
+        // 2. Volume and Steel Calculation
+        const volume = Y * X * L;
+        const steel = parseFloat((volume * 0.9).toFixed(2)); // Use 0.9 t/m³ for foundation
+        const costConcrete = volume * pricePerM3;
+
+        // 3. Materials Calculation (using the 0.67 factor)
+        // K = totalVolume / (0.67 * Sum_rel)
+        // Note: CEMENT_SPECIFIC_GRAVITY and PRICE_CEMENT_BAG should be defined globally
+        const K = volume / (0.67 * sumRatios);
+        
+        const C_act_vol = K * ratioC;
+        const S_act_vol = K * ratioS;
+        const G_act_vol = K * ratioG;
+
+        // Convert Cement Volume to Weight and Bags
+        const C_weight = C_act_vol * CEMENT_SPECIFIC_GRAVITY; // 1440 kg/m³
+        const C_bags = Math.ceil(C_weight / 50);             // 50kg per bag
+        const costCementBags = C_bags * PRICE_CEMENT_BAG;    // 5000 D.A
+
+        // 4. Results Display
+        let resultLines = [];
+        const mixRatioText = `${ratioC}:${ratioS}:${ratioG}`;
+        
+        resultLines.push(`**حجم الأساس:** ${volume.toFixed(2)} م³`);
+        resultLines.push(`**كمية الحديد:** ${steel} طن`);
+        resultLines.push(`**تكلفة الخرسانة (المتر):** ${formatNumber(costConcrete)} د.ع`);
+        
+        resultLines.push(`\n--- تقدير المواد (نسبة ${mixRatioText}) ---`);
+        resultLines.push(`**الأسمنت (Cement):**`);
+        resultLines.push(`  الحجم: ${C_act_vol.toFixed(2)} م³`);
+        resultLines.push(`  الأكياس: ${formatNumber(C_bags)} كيس`);
+        resultLines.push(`  التكلفة: ${formatNumber(costCementBags)} د.ع`);
+        
+        resultLines.push(`**الرمل (Sand):**`);
+        resultLines.push(`  الحجم: ${S_act_vol.toFixed(2)} م³`);
+        
+        resultLines.push(`**الحصى (Gravel):**`);
+        resultLines.push(`  الحجم: ${G_act_vol.toFixed(2)} م³`);
+
+        document.getElementById('foundationC5Result').innerText = resultLines.join('\n');
+
+    } catch (e) {
+        showAlert(e.message, "error");
+        document.getElementById('foundationC5Result').innerText = "حدث خطأ في الإدخال.";
+    }
+}
+
+function clearFoundationC5Inputs() {
+    // تحديث دالة المسح للحقول الجديدة
+    document.getElementById('foundationCementRatio').value = '1';
+    document.getElementById('foundationSandRatio').value = '3';
+    document.getElementById('foundationGravelRatio').value = '6';
+    
+    document.getElementById('foundationY7').value = '';
+    document.getElementById('foundationX8').value = '';
+    document.getElementById('foundationL8').value = '';
+    document.getElementById('foundationC5Result').innerText = '';
+}
+
+
+// =======================================================
+// 5. حساب الكاشي أو البورسلين (Equivalent to open_c6)
+// =======================================================
+function updateTilePriceHint() {
+    const tileType = document.getElementById('tileType').value;
+    const hintLabel = document.getElementById('tilePriceHint');
+    if (tileType === "كاشي") {
+        hintLabel.innerText = `السعر التقريبي: ${formatNumber(PRICE_TILE_PER_M2)} د.ع/م²`;
+        document.getElementById('pricePerM2Tile').value = PRICE_TILE_PER_M2;
+    } else if (tileType === "بورسلين") {
+        hintLabel.innerText = `السعر التقريبي: ${formatNumber(PRICE_PORCELAIN_PER_M2)} د.ع/م²`;
+        document.getElementById('pricePerM2Tile').value = PRICE_PORCELAIN_PER_M2;
+    }
+}
+
+function calculateTilePorcelain() {
+    try {
+        const totalArea = getInputValue('totalAreaTile');
+        const tileLength = getInputValue('tileLength');
+        const tileWidth = getInputValue('tileWidth');
+        const pricePerM2 = getInputValue('pricePerM2Tile');
+        const tileType = document.getElementById('tileType').value;
+
+        if (totalArea <= 0 || tileLength <= 0 || tileWidth <= 0 || pricePerM2 <= 0) {
+            throw new Error("جميع القيم يجب أن تكون أكبر من صفر.");
+        }
+
+        const tileArea = tileLength * tileWidth;
+        const numTiles = totalArea / tileArea;
+        const totalCost = totalArea * pricePerM2;
+
+        const result =
+            `نوع البلاط: ${tileType}\n` +
+            `السعر لكل متر مربع: ${formatNumber(pricePerM2)} د.ع\n` +
+            `عدد البلاطات المطلوبة: ${Math.ceil(numTiles)} بلاطة\n` + // Round up for tiles
+            `الكلفة الكلية: ${formatNumber(totalCost)} د.ع`;
+
+        document.getElementById('tilePorcelainResult').innerText = result;
+
+    } catch (e) {
+        showAlert(e.message, "error");
+        document.getElementById('tilePorcelainResult').innerText = "حدث خطأ في الإدخال.";
+    }
+}
+
+// =======================================================
+// 6. حساب الطابوق والأسمنت (Equivalent to open_tab4)
+// =======================================================
+// =======================================================
+// حساب الطابوق والأسمنت والرمل (جدار سماكة 24 سم)
+// =======================================================
+
+// حساب الطابوق والأسمنت لجدار سماكته 24 سم
+// =======================================================
+
+function updateWindowDoorFields(type) {
+    const numElements = type === 'window' ? getInputValue('numWindows', true, 'int') : getInputValue('numDoors', true, 'int');
+    const container = type === 'window' ? document.getElementById('windowFieldsContainer') : document.getElementById('doorFieldsContainer');
+    container.innerHTML = '';
+
+    for (let i = 0; i < numElements; i++) {
+        const div = document.createElement('div');
+        div.className = 'dynamic-field-row';
+
+        const heightLabel = document.createElement('label');
+        heightLabel.innerText = `ارتفاع ${i + 1} (م):`;
+        const heightInput = document.createElement('input');
+        heightInput.type = 'number';
+        heightInput.id = `${type}Height${i}`;
+        heightInput.step = 'any';
+        heightInput.value = '0';
+        heightInput.style.width = '70px';
+        heightInput.classList.add(`${type}-height-input`);
+
+        const widthLabel = document.createElement('label');
+        widthLabel.innerText = `عرض ${i + 1} (م):`;
+        const widthInput = document.createElement('input');
+        widthInput.type = 'number';
+        widthInput.id = `${type}Width${i}`;
+        widthInput.step = 'any';
+        widthInput.value = '0';
+        widthInput.style.width = '70px';
+        widthInput.classList.add(`${type}-width-input`);
+
+        div.appendChild(heightLabel);
+        div.appendChild(heightInput);
+        div.appendChild(widthLabel);
+        div.appendChild(widthInput);
+        container.appendChild(div);
+    }
+}
+
+function updateBrickPrice() {
+    const brickType = document.querySelector('input[name="brickType"]:checked').value;
+    const priceInput = document.getElementById('bricksPrice4000');
+    if (brickType === "أحمر") {
+        priceInput.value = PRICE_RED_BRICKS_4000;
+    } else {
+        priceInput.value = PRICE_BRICKS_NORMAL_4000;
+    }
+}
+
+function calculateBricksCement() {
+    try {
+        const wallLengthWith = getInputValue('wallLengthWith');
+        const wallLengthWithout = getInputValue('wallLengthWithout');
+        const wallHeight = getInputValue('wallHeight');
+        const numWindows = getInputValue('numWindows', true, 'int');
+        const numDoors = getInputValue('numDoors', true, 'int');
+        const betloThickness = getInputValue('betloThickness');
+        const beamThickness = getInputValue('beamThickness');
+        const priceBricks4000 = getInputValue('bricksPrice4000');
+        const brickType = document.querySelector('input[name="brickType"]:checked').value;
+
+        if (wallLengthWith < 0 || wallLengthWithout < 0 || wallHeight <= 0 ||
+            betloThickness < 0 || beamThickness < 0 || priceBricks4000 <= 0) {
+            throw new Error("تأكد من إدخال قيم صحيحة للحائط، السماكات، والسعر (الارتفاع والسعر يجب أن يكونا أكبر من صفر).");
+        }
+
+        const netHeight1 = wallHeight - betloThickness - beamThickness;
+        const netHeight2 = (wallLengthWithout > 0) ? (wallHeight - betloThickness) : 0;
+
+        if (netHeight1 < 0 || netHeight2 < 0) {
+            throw new Error("ارتفاع الحائط الصافي لا يمكن أن يكون سالباً. تأكد أن سمك البتلو والجسر لا يتجاوز ارتفاع الحائط.");
+        }
+
+        // حساب المساحة الإجمالية للجدران
+        const wallArea1 = wallLengthWith * netHeight1;
+        const wallArea2 = (wallLengthWithout > 0) ? (wallLengthWithout * netHeight2) : 0;
+        const totalWallArea = wallArea1 + wallArea2;
+
+        // -------------------------------
+        // معادلات جدار 24 سم:
+        // 1 م³ جدار = 435 طابوقة + 0.23 م³ مونة
+        // حجم كيس سمنت = 0.035 م³
+        // -------------------------------
+        const wallVolume = totalWallArea * 0.24; // لأن السماكة 24 سم = 0.24 م
+        const totalBricks = 435 * wallVolume*1.05;
+        const mortarVolume = 0.23 * wallVolume;
+
+        // طرح الشبابيك والأبواب من الطابوق
+        let removedBricksVolume = 0;
+        for (let i = 0; i < numWindows; i++) {
+            const h = getInputValue(`windowHeight${i}`, true);
+            const w = getInputValue(`windowWidth${i}`, true);
+            removedBricksVolume += (h * w * 0.24);
+        }
+        for (let i = 0; i < numDoors; i++) {
+            const h = getInputValue(`doorHeight${i}`, true);
+            const w = getInputValue(`doorWidth${i}`, true);
+            removedBricksVolume += (h * w * 0.24);
+        }
+
+        const removedBricks = 435 * removedBricksVolume;
+        const finalBricks = Math.max(0, Math.ceil(totalBricks - removedBricks));
+
+        // حساب المونة النهائية
+        const finalMortar = 0.23 * (wallVolume - removedBricksVolume);
+
+        // السمنت والرمل (نسبة 6:1)
+        const cementVolume = finalMortar / 4;
+        const sandVolume = finalMortar * 3 / 4;
+        const cementBags = Math.ceil(cementVolume / 0.035);
+
+        // التكاليف
+        const costBricks = (finalBricks / 4000) * priceBricks4000;
+        const costCement = cementBags * PRICE_CEMENT_BAG;
+        const totalCost = costBricks + costCement;
+
+        const result =
+            `حجم الجدار = ${wallVolume.toFixed(2)} م³\n` +
+            `عدد الطابوق = ${formatNumber(finalBricks)} طابوقة\n` +
+            `حجم المونة = ${finalMortar.toFixed(2)} م³\n` +
+            `عدد أكياس السمنت = ${cementBags} كيس\n` +
+            `حجم الرمل = ${sandVolume.toFixed(2)} م³\n` +
+            `تكلفة الطابوق (${brickType}) = ${formatNumber(costBricks)} د.ع\n` +
+            `تكلفة السمنت = ${formatNumber(costCement)} د.ع\n` +
+            `التكلفة الكلية التقديرية = ${formatNumber(totalCost)} د.ع`;
+
+        document.getElementById('bricksCementResult').innerText = result;
+
+    } catch (e) {
+        showAlert(e.message, "error");
+        document.getElementById('bricksCementResult').innerText = "حدث خطأ في الإدخال.";
+    }
+}
+
+
+
+
+// =======================================================
+// 7. حساب الجص / الأبيّض (Equivalent to open_tab5)
+// =======================================================
+let plasterWindowEntries = [];
+let plasterDoorEntries = [];
+
+function addWindowEntryPlaster() {
+    const container = document.getElementById('plasterWindowFields');
+    const div = document.createElement('div');
+    div.className = 'dynamic-field-row';
+
+    const lengthLabel = document.createElement('label');
+    lengthLabel.innerText = `طول:`;
+    const lengthInput = document.createElement('input');
+    lengthInput.type = 'number';
+    lengthInput.step = 'any';
+    lengthInput.value = '0';
+    lengthInput.style.width = '70px';
+    lengthInput.classList.add('plaster-window-length');
+
+    const widthLabel = document.createElement('label');
+    widthLabel.innerText = `عرض:`;
+    const widthInput = document.createElement('input');
+    widthInput.type = 'number';
+    widthInput.step = 'any';
+    widthInput.value = '0';
+    widthInput.style.width = '70px';
+    widthInput.classList.add('plaster-window-width');
+
+    const removeBtn = document.createElement('button');
+    removeBtn.className = 'add-remove-btn remove-btn';
+    removeBtn.innerHTML = '&#10006;'; // X mark
+    removeBtn.onclick = () => {
+        container.removeChild(div);
+        plasterWindowEntries = plasterWindowEntries.filter(entry => entry.lengthInput !== lengthInput);
+    };
+
+    div.appendChild(lengthLabel);
+    div.appendChild(lengthInput);
+    div.appendChild(widthLabel);
+    div.appendChild(widthInput);
+    div.appendChild(removeBtn);
+    container.appendChild(div);
+    plasterWindowEntries.push({ lengthInput, widthInput });
+}
+
+function addDoorEntryPlaster() {
+    const container = document.getElementById('plasterDoorFields');
+    const div = document.createElement('div');
+    div.className = 'dynamic-field-row';
+
+    const lengthLabel = document.createElement('label');
+    lengthLabel.innerText = `طول:`;
+    const lengthInput = document.createElement('input');
+    lengthInput.type = 'number';
+    lengthInput.step = 'any';
+    lengthInput.value = '0';
+    lengthInput.style.width = '70px';
+    lengthInput.classList.add('plaster-door-length');
+
+
+    const widthLabel = document.createElement('label');
+    widthLabel.innerText = `عرض:`;
+    const widthInput = document.createElement('input');
+    widthInput.type = 'number';
+    widthInput.step = 'any';
+    widthInput.value = '0';
+    widthInput.style.width = '70px';
+    widthInput.classList.add('plaster-door-width');
+
+
+    const removeBtn = document.createElement('button');
+    removeBtn.className = 'add-remove-btn remove-btn';
+    removeBtn.innerHTML = '&#10006;'; // X mark
+    removeBtn.onclick = () => {
+        container.removeChild(div);
+        plasterDoorEntries = plasterDoorEntries.filter(entry => entry.lengthInput !== lengthInput);
+    };
+
+    div.appendChild(lengthLabel);
+    div.appendChild(lengthInput);
+    div.appendChild(widthLabel);
+    div.appendChild(widthInput);
+    div.appendChild(removeBtn);
+    container.appendChild(div);
+    plasterDoorEntries.push({ lengthInput, widthInput });
+}
+
+function togglePlasterWhiteThickness() {
+    const materialType = document.querySelector('input[name="materialType"]:checked').value;
+    const plasterGroup = document.getElementById('plasterThicknessGroup');
+    const whiteGroup = document.getElementById('whiteThicknessGroup');
+
+    if (materialType === "plaster") {
+        plasterGroup.style.display = 'block';
+        whiteGroup.style.display = 'none';
+    } else { // white
+        plasterGroup.style.display = 'none';
+        whiteGroup.style.display = 'block';
+    }
+}
+
+function calculatePlasterWhite() {
+    try {
+        const roomLength = getInputValue('roomLength');
+        const roomWidth = getInputValue('roomWidth');
+        const wallHeightPlaster = getInputValue('wallHeightPlaster');
+        const ceilingLength = getInputValue('ceilingLength');
+        const ceilingWidth = getInputValue('ceilingWidth');
+        const plasterBagPrice = getInputValue('plasterBagPrice');
+        const whiteBagPrice = getInputValue('whiteBagPrice');
+        const materialType = document.querySelector('input[name="materialType"]:checked').value;
+
+        let materialThickness;
+        let bagsPerM3;
+        let bagPrice;
+
+        if (materialType === "plaster") {
+            materialThickness = getInputValue('plasterThickness');
+            bagsPerM3 = 35; // Example: Assuming 35 bags of plaster per cubic meter
+            bagPrice = plasterBagPrice;
+        } else { // white
+            materialThickness = getInputValue('whiteThickness');
+            bagsPerM3 = 100; // Example: Assuming 100 bags of white per cubic meter
+            bagPrice = whiteBagPrice;
+        }
+
+        if (roomLength <= 0 || roomWidth <= 0 || wallHeightPlaster <= 0 ||
+            ceilingLength <= 0 || ceilingWidth <= 0 || materialThickness <= 0 || bagPrice <= 0) {
+            throw new Error("تأكد من إدخال جميع الأبعاد، السماكة، والسعر بشكل صحيح (يجب أن تكون أكبر من صفر).");
+        }
+
+        // Calculate total area for windows and doors
+        let totalWindowArea = 0;
+        plasterWindowEntries.forEach(entry => {
+            const w_l = parseFloat(entry.lengthInput.value);
+            const w_w = parseFloat(entry.widthInput.value);
+            if (!isNaN(w_l) && !isNaN(w_w)) {
+                totalWindowArea += w_l * w_w;
+            }
+        });
+
+        let totalDoorArea = 0;
+        plasterDoorEntries.forEach(entry => {
+            const d_l = parseFloat(entry.lengthInput.value);
+            const d_w = parseFloat(entry.widthInput.value);
+            if (!isNaN(d_l) && !isNaN(d_w)) {
+                totalDoorArea += d_l * d_w;
+            }
+        });
+
+        const wallArea = 2 * (roomLength + roomWidth) * wallHeightPlaster;
+        const netWallArea = wallArea - (totalWindowArea + totalDoorArea);
+        const ceilingArea = ceilingLength * ceilingWidth;
+        const totalArea = netWallArea + ceilingArea;
+
+        // Calculate volume of material needed
+        const materialVolume = totalArea * materialThickness;
+
+        // Calculate number of bags and total cost
+        const numBags = materialVolume * bagsPerM3; // Bags needed
+        const totalCost = numBags * bagPrice;
+
+        const result =
+            `مساحة الجدران الصافية: ${netWallArea.toFixed(2)} م²\n` +
+            `مساحة السقف: ${ceilingArea.toFixed(2)} م²\n` +
+            `المساحة الكلية للمادة: ${totalArea.toFixed(2)} م²\n` +
+            `حجم المادة المطلوب: ${materialVolume.toFixed(3)} م³\n` +
+            `عدد الأكياس المطلوبة: ${formatNumber(Math.ceil(numBags))} كيس\n` + // Round up bags
+            `الكلفة الكلية للمادة: ${formatNumber(totalCost)} د.ع`;
+
+        document.getElementById('plasterWhiteResult').innerText = result;
+
+    } catch (e) {
+        showAlert(e.message, "error");
+        document.getElementById('plasterWhiteResult').innerText = "حدث خطأ في الإدخال.";
+    }
+}
+
+
+// Initial setup calls
+document.addEventListener('DOMContentLoaded', () => {
+    toggleExcavationFillFields(); // For excavation/fill radio buttons
+    toggleConcreteFields();      // For concrete component checkboxes
+    updateTilePriceHint();       // For tile/porcelain price hint
+    updateBrickPrice();          // For brick type price
+    togglePlasterWhiteThickness(); // For plaster/white thickness fields
+
+    // Initial setup for dynamic window/door fields for bricks and plaster (if not 0 default)
+    updateWindowDoorFields('window');
+    updateWindowDoorFields('door');
+});
+  </script>
+
+</body>
+</html>
