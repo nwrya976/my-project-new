@@ -1032,9 +1032,9 @@ function calculateExcavationFill() {
 
             resultLines.push("---- الحفر ----");
             resultLines.push(`عمق الحفر: ${Y.toFixed(2)} م`);
-            resultLines.push(`كمية الحفر: ${T.toFixed(2)} م³`);
+            resultLines.push(` كمية الحفر بعد الانتفاخ: ${T.toFixed(2)} م³`);
             resultLines.push(`عدد السيارات المطلوبة: ${N.toFixed(2)}`);
-            resultLines.push(`السعر الكلي للحفر: ${formatNumber(totalPriceHfr)} د.ع`);
+            resultLines.push(`السعر الكلي لنقل التربة: ${formatNumber(totalPriceHfr)} د.ع`);
         }
 
         // ----- Fill Calculation -----
@@ -1059,7 +1059,7 @@ function calculateExcavationFill() {
                 const priceRdm = N1 * P1;
                 resultLines.push(`كمية الردم: ${T2.toFixed(2)} م³`);
                 resultLines.push(`عدد السيارات: ${N1.toFixed(2)}`);
-                resultLines.push(`السعر الكلي للردم: ${formatNumber(priceRdm)} د.ع`);
+                resultLines.push(`السعر الكلي لنقل التربة : ${formatNumber(priceRdm)} د.ع`);
             } else {
                 // Two layers for compaction over 25cm
                 const H3_half = H3_m / 2;
@@ -1070,13 +1070,13 @@ function calculateExcavationFill() {
                 const totalTrucks = N1_layer * 2;
                 const totalPrice = priceLayer * 2;
 
-                resultLines.push("ارتفاع الردم أكبر من 25 سم → طبقتين:");
+                resultLines.push("ارتفاع الردم أكبر من 25 سم --> طبقتين:");
                 resultLines.push(`كمية الردم للطبقة الواحدة: ${T2_layer.toFixed(2)} م³`);
                 resultLines.push(`عدد السيارات لكل طبقة: ${N1_layer.toFixed(2)}`);
                 resultLines.push(`السعر لكل طبقة: ${formatNumber(priceLayer)} د.ع`);
                 resultLines.push(`الكمية الإجمالية: ${totalRdm.toFixed(2)} م³`);
                 resultLines.push(`عدد السيارات الكلي: ${totalTrucks.toFixed(2)}`);
-                resultLines.push(`السعر الكلي للردم: ${formatNumber(totalPrice)} د.ع`);
+                resultLines.push(`السعر الكلي لنقل التربة: ${formatNumber(totalPrice)} د.ع`);
             }
         }
 
@@ -1821,4 +1821,5 @@ document.addEventListener('DOMContentLoaded', () => {
   </script>
 
 </body>
+
 </html>
